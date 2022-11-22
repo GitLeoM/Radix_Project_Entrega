@@ -4,6 +4,8 @@
         android:label="radix_entrega_project"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyBRm-rFbb5WX4mM9f5PtbG5P30_HUlPKGU"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
