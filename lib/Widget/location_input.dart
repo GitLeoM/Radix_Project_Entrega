@@ -25,13 +25,13 @@ class _LocationInputState extends State<LocationInput> {
 
   @override
   Widget build(BuildContext context) {
-    // _getCurrentUserLocation().then(
-    //   (value) {
-    //     setState(() {
-    //       _previewImageUrl = value;
-    //     });
-    //   },
-    // );
+    _getCurrentUserLocation().then(
+      (value) {
+        setState(() {
+          _previewImageUrl = value;
+        });
+      },
+    );
     return Column(
       children: [
         Container(
