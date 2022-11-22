@@ -7,14 +7,14 @@ class CarsTile extends StatelessWidget {
   final constraints;
   final String titleCar;
   final String subTitlePlaca, subTitleQntdCorridas;
-  final trailingIcon;
+  final Function() func;
 
   CarsTile({
+    required this.func,
     required this.constraints,
     required this.titleCar,
     required this.subTitlePlaca,
     required this.subTitleQntdCorridas,
-    required this.trailingIcon,
   });
 
   @override
@@ -67,11 +67,11 @@ class CarsTile extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(
                 0, constraints.maxWidth * .02, constraints.maxWidth * .08, 0),
             child: IconButton(
-              onPressed: () {},
+              onPressed: func,
               iconSize: 32,
-              icon: Icon(
-                trailingIcon,
-                color: const Color.fromRGBO(235, 99, 99, 1),
+              icon: const Icon(
+                Icons.close_rounded,
+                color: Color.fromRGBO(235, 99, 99, 1),
               ),
             ),
           ),

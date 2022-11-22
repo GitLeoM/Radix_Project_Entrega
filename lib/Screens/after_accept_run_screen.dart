@@ -1,11 +1,19 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:radix_entrega_project/Components/button_run_screen.dart';
 import 'package:radix_entrega_project/Data/dummy_data.dart';
+import 'package:radix_entrega_project/Screens/finished_run.dart';
 import 'package:radix_entrega_project/Utils/app_routes.dart';
 
+import '../Model/pedido.dart';
+import '../Providers/pedido_provider.dart';
+
 class AcceptRunScreen extends StatefulWidget {
-  const AcceptRunScreen({Key? key}) : super(key: key);
+  int index;
+
+  AcceptRunScreen({this.index = 0});
 
   @override
   State<AcceptRunScreen> createState() => _AcceptRunScreenState();
@@ -78,9 +86,33 @@ class _AcceptRunScreenState extends State<AcceptRunScreen> {
     );
   }
 
+  void updatePedido(constraints) async {
+    try {
+      var response = await Dio().put(
+        'http://127.0.0.1:8000/api/updatePedido/${widget.index}',
+        data: {
+          'statusPedido': '3',
+        },
+      );
+      if (response.data['status'] == '400') {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text(response.data['message'],
+                style: TextStyle(fontSize: constraints.maxWidth * .04)),
+          ),
+        );
+      } else {
+        print(response.data['message']);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    int i = 0;
+    List<Pedido> _pedidos = Provider.of<PedidoProvider>(context).getPedidos();
     return Scaffold(
       backgroundColor: const Color.fromRGBO(238, 238, 238, 1),
       body: LayoutBuilder(
@@ -112,13 +144,17 @@ class _AcceptRunScreenState extends State<AcceptRunScreen> {
                             children: [
                               Row(
                                 children: [
-                                  _columnInfos(constraints, 'Colete a entrega:',
-                                      i, DUMMY_pedidos.elementAt(i).localInic),
+                                  _columnInfos(
+                                      constraints,
+                                      'Colete a entrega:',
+                                      widget.index,
+                                      DUMMY_pedidos.elementAt(widget.index)
+                                          .localInic),
                                   Padding(
                                     padding: const EdgeInsets.only(
                                         left: 10, top: 48),
                                     child: Text(
-                                      '${DUMMY_pedidos.elementAt(i).distancia} de distância',
+                                      '${DUMMY_pedidos.elementAt(widget.index).distancia} de distância',
                                       overflow: TextOverflow.fade,
                                       style: const TextStyle(
                                         color: Color.fromRGBO(153, 153, 153, 1),
@@ -132,16 +168,26 @@ class _AcceptRunScreenState extends State<AcceptRunScreen> {
                             ],
                           ),
                           SizedBox(height: constraints.maxHeight * .07),
-                          _columnInfos(constraints, 'Número do Pedido:', i,
-                              DUMMY_pedidos.elementAt(i).numPed),
+                          _columnInfos(
+                              constraints,
+                              'Número do Pedido:',
+                              widget.index,
+                              _pedidos[widget.index].idPedido.toString()),
                           SizedBox(height: constraints.maxHeight * .07),
-                          _columnInfos(constraints, 'Entregue o Pedido:', i,
-                              DUMMY_pedidos.elementAt(i).localFim),
+                          _columnInfos(
+                              constraints,
+                              'Entregue o Pedido:',
+                              widget.index,
+                              DUMMY_pedidos.elementAt(widget.index).localFim),
                           SizedBox(height: constraints.maxHeight * .06),
                           _rowButton(
                             'Concluir Entrega',
                             'Abrir mapa para entrega',
                             () {
+                              // updatePedido(constraints);
+                              FinishedRun(
+                                index: widget.index,
+                              );
                               Navigator.of(context)
                                   .pushReplacementNamed(AppRoutes.FINISHEDRUN);
                             },

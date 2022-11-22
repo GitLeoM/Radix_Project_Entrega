@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:radix_entrega_project/Components/button_white.dart';
 
 import '../Components/button.dart';
@@ -14,6 +12,65 @@ class ReportScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _bottomSheet(BuildContext context) {
+      return showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (_) {
+          return SizedBox(
+            height: MediaQuery.of(context).size.height * .90,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topRight: Radius.circular(40),
+                    topLeft: Radius.circular(40),
+                  ),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Color.fromRGBO(132, 202, 157, 1),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(height: constraints.maxHeight * .05),
+                        Center(
+                          child: Text(
+                            'Pedimos desculpas pelo transtorno!',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: constraints.maxHeight * .05,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: constraints.maxHeight * .12),
+                        ImageContainer(
+                          'assets/svg/tela_relatar_problema.svg',
+                          constraints.maxHeight * .4,
+                        ),
+                        SizedBox(height: constraints.maxHeight * .12),
+                        ButtonWhite(
+                          text: 'Tela inicial',
+                          onTap: () => Navigator.of(context)
+                              .pushReplacementNamed(AppRoutes.HOMETAB),
+                          height: constraints.maxHeight * .08,
+                          width: constraints.maxWidth * .7,
+                          color: false,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      );
+    }
+
     return Scaffold(
       backgroundColor: Color.fromRGBO(229, 229, 229, 1),
       resizeToAvoidBottomInset: false,
@@ -106,68 +163,7 @@ class ReportScreen extends StatelessWidget {
                 Button(
                   text: 'Relatar o problema',
                   onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                      builder: (_) {
-                        return SizedBox(
-                          height: MediaQuery.of(context).size.height * .90,
-                          child: LayoutBuilder(
-                            builder: (context, constraints) {
-                              return ClipRRect(
-                                borderRadius: const BorderRadius.only(
-                                  topRight: Radius.circular(40),
-                                  topLeft: Radius.circular(40),
-                                ),
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    color: Color.fromRGBO(132, 202, 157, 1),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      SizedBox(
-                                          height: constraints.maxHeight * .05),
-                                      Center(
-                                        child: Text(
-                                          'Pedimos desculpas pelo transtorno!',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize:
-                                                constraints.maxHeight * .05,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                          height: constraints.maxHeight * .12),
-                                      ImageContainer(
-                                        'assets/svg/tela_relatar_problema.svg',
-                                        constraints.maxHeight * .4,
-                                      ),
-                                      SizedBox(
-                                          height: constraints.maxHeight * .12),
-                                      ButtonWhite(
-                                        text: 'Tela inicial',
-                                        onTap: () => Navigator.of(context)
-                                            .pushReplacementNamed(
-                                                AppRoutes.HOMETAB),
-                                        height: constraints.maxHeight * .08,
-                                        width: constraints.maxWidth * .7,
-                                        color: false,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    );
+                    _bottomSheet(context);
                   },
                   height: constraints.maxHeight * .09,
                   width: constraints.maxWidth * .7,

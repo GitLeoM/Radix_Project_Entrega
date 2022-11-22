@@ -115,76 +115,78 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 SizedBox(height: constraints.maxHeight * .08),
                 Button(
                   text: 'Enviar Feedback',
-                  onTap: ()
-                      //=> sendFeedback(
-                      //   nomeClienteController.text,
-                      //   mensagemClienteController.text,
-                      // ).then((value)
-                      {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                      builder: (_) {
-                        return SizedBox(
-                          height: MediaQuery.of(context).size.height * .90,
-                          child: LayoutBuilder(
-                            builder: (context, constraints) {
-                              return ClipRRect(
-                                borderRadius: const BorderRadius.only(
-                                  topRight: Radius.circular(40),
-                                  topLeft: Radius.circular(40),
-                                ),
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    color: Color.fromRGBO(132, 202, 157, 1),
+                  onTap: () => sendFeedback(
+                    nomeClienteController.text,
+                    mensagemClienteController.text,
+                  ).then(
+                    (value) {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (_) {
+                          return SizedBox(
+                            height: MediaQuery.of(context).size.height * .90,
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                return ClipRRect(
+                                  borderRadius: const BorderRadius.only(
+                                    topRight: Radius.circular(40),
+                                    topLeft: Radius.circular(40),
                                   ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      SizedBox(
-                                          height: constraints.maxHeight * .05),
-                                      Center(
-                                        child: Text(
-                                          'Obrigado por enviar seu Feedback!',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize:
-                                                constraints.maxHeight * .040,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.white,
+                                  child: Container(
+                                    decoration: const BoxDecoration(
+                                      color: Color.fromRGBO(132, 202, 157, 1),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        SizedBox(
+                                            height:
+                                                constraints.maxHeight * .05),
+                                        Center(
+                                          child: Text(
+                                            'Obrigado por enviar seu Feedback!',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize:
+                                                  constraints.maxHeight * .040,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.white,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                          height: constraints.maxHeight * .12),
-                                      ImageContainer(
-                                        'assets/svg/undraw_partying.svg',
-                                        constraints.maxHeight * .4,
-                                      ),
-                                      SizedBox(
-                                          height: constraints.maxHeight * .12),
-                                      ButtonWhite(
-                                        text: 'Home',
-                                        onTap: () => Navigator.of(context)
-                                            .pushReplacementNamed(
-                                                AppRoutes.HOMETAB),
-                                        height: constraints.maxHeight * .08,
-                                        width: constraints.maxWidth * .6,
-                                        color: false,
-                                      ),
-                                    ],
+                                        SizedBox(
+                                            height:
+                                                constraints.maxHeight * .12),
+                                        ImageContainer(
+                                          'assets/svg/undraw_partying.svg',
+                                          constraints.maxHeight * .4,
+                                        ),
+                                        SizedBox(
+                                            height:
+                                                constraints.maxHeight * .12),
+                                        ButtonWhite(
+                                          text: 'Home',
+                                          onTap: () => Navigator.of(context)
+                                              .pushReplacementNamed(
+                                                  AppRoutes.HOMETAB),
+                                          height: constraints.maxHeight * .08,
+                                          width: constraints.maxWidth * .6,
+                                          color: false,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  //),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
                   height: constraints.maxHeight * .09,
                   width: constraints.maxWidth * .7,
                   color: true,

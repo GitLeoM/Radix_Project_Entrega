@@ -27,7 +27,7 @@ class ProfileButton extends StatelessWidget {
           horizontal: constraints.maxHeight * .02,
         ),
         child: SizedBox(
-          height: constraints.maxHeight * .13,
+          height: constraints.maxHeight * .11,
           child: ListTile(
             contentPadding: EdgeInsets.only(top: constraints.maxHeight * .008),
             shape: RoundedRectangleBorder(
@@ -39,7 +39,7 @@ class ProfileButton extends StatelessWidget {
               child: Text(
                 title,
                 style: TextStyle(
-                  fontSize: constraints.maxHeight * .038,
+                  fontSize: constraints.maxHeight * .033,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -49,7 +49,7 @@ class ProfileButton extends StatelessWidget {
               child: Text(
                 subTitle,
                 style: TextStyle(
-                  fontSize: constraints.maxHeight * .022,
+                  fontSize: constraints.maxHeight * .019,
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -58,7 +58,7 @@ class ProfileButton extends StatelessWidget {
               padding: EdgeInsets.only(left: constraints.maxWidth * .03),
               child: Icon(
                 leading,
-                size: constraints.maxHeight * .06,
+                size: constraints.maxHeight * .05,
                 color: const Color.fromRGBO(108, 168, 129, 1),
               ),
             ),
@@ -66,7 +66,7 @@ class ProfileButton extends StatelessWidget {
               padding: EdgeInsets.only(right: constraints.maxWidth * .03),
               child: Icon(
                 traicing,
-                size: constraints.maxHeight * .04,
+                size: constraints.maxHeight * .03,
                 color: const Color.fromRGBO(108, 168, 129, 1),
               ),
             ),

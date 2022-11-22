@@ -8,21 +8,25 @@ class DeliveryMan {
   final String nome;
   final String email;
   final String senha;
-  final Carro? carro;
+  final String urlImage;
   final String cpf;
+  final String rg;
+  final String idade;
   bool statusOnOff;
-  bool statusConta;
+  int statusConta;
   bool isUser;
 
   DeliveryMan(
       {required this.id,
       required this.nome,
+      this.rg = '',
+      this.idade = '',
       this.statusOnOff = false,
+      this.urlImage = '',
       required this.email,
       required this.senha,
-      this.carro = null,
-      required this.cpf,
-      this.statusConta = true,
+      this.cpf = '',
+      this.statusConta = 1,
       this.isUser = false});
 
   void set setIsUser(bool state) {

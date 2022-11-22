@@ -1,11 +1,23 @@
+// ignore_for_file: use_key_in_widget_constructors
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:radix_entrega_project/Widget/location_input.dart';
 
 import '../Data/dummy_data.dart';
+import '../Model/pedido.dart';
+import '../Providers/pedido_provider.dart';
 
 class HistoricDetailScreen extends StatelessWidget {
-  final int index;
+  int index = 1;
 
-  HistoricDetailScreen({this.index = 0});
+  set setIndex(int newInt) {
+    index = newInt;
+  }
+
+  int get newIndex {
+    return index;
+  }
 
   Widget _rowInfos(
       BoxConstraints constraints, String titleBig, String infoRequisitada) {
@@ -41,7 +53,9 @@ class HistoricDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int i = index;
+    List<Pedido> _pedidos = Provider.of<PedidoProvider>(context).getPedidos();
+
+    int i = newIndex;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       builder: (context, child) {
@@ -57,61 +71,30 @@ class HistoricDetailScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Container(
-                            color: Colors.white,
-                            height: constraints.maxHeight * .9,
-                            width: constraints.maxWidth * .9,
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  _rowInfos(constraints, 'Valor da entrega:',
-                                      DUMMY_pedidos.elementAt(i).valor),
-                                  _rowInfos(constraints, 'Tempo total gasto:',
-                                      DUMMY_pedidos.elementAt(i).tempEntrega),
-                                  _rowInfos(constraints, 'Número do pedido:',
-                                      DUMMY_pedidos.elementAt(i).numPed),
-                                  _rowInfos(constraints, 'Nome do cliente:',
-                                      DUMMY_cliente.elementAt(i).nome),
-                                  Container(
+                        Container(
+                          color: Colors.white,
+                          height: constraints.maxHeight * .874,
+                          width: constraints.maxWidth * .91,
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                _rowInfos(constraints, 'Valor da entrega:',
+                                    _pedidos[2].frete.toString()),
+                                _rowInfos(constraints, 'Tempo total gasto:',
+                                    DUMMY_pedidos.elementAt(2).tempEntrega),
+                                _rowInfos(constraints, 'Número do pedido:',
+                                    _pedidos[2].idPedido.toString()),
+                                _rowInfos(constraints, 'Nome do cliente:',
+                                    DUMMY_cliente.elementAt(2).nome),
+                                Container(
                                     width: double.infinity,
-                                    color: Color.fromARGB(255, 205, 237, 216),
-                                    child: Column(
-                                      children: [
-                                        const Icon(
-                                          Icons.location_on_sharp,
-                                          color:
-                                              Color.fromRGBO(132, 202, 157, 1),
-                                        ),
-                                        SizedBox(
-                                          height: constraints.maxHeight * .02,
-                                        ),
-                                        Text(
-                                          DUMMY_pedidos.elementAt(i).localInic,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.w300,
-                                              fontSize: 18),
-                                        ),
-                                        const Icon(
-                                          Icons.arrow_downward_rounded,
-                                          color:
-                                              Color.fromRGBO(132, 202, 157, 1),
-                                          size: 40,
-                                        ),
-                                        Text(
-                                          DUMMY_pedidos.elementAt(i).localFim,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.w300,
-                                              fontSize: 18),
-                                        ),
-                                      ],
+                                    child:
+                                        LocationInput() /*Center(
+                                      child: Text('Mapa não carregado!!'),
+                                    )*/
                                     ),
-                                  ),
-                                ]),
-                          ),
+                              ]),
                         ),
                       ]),
                 ));

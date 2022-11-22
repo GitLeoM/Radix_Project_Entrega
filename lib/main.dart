@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:radix_entrega_project/Providers/carro_provider.dart';
 import 'package:radix_entrega_project/Providers/delivery_man_provider.dart';
+import 'package:radix_entrega_project/Providers/pedido_provider.dart';
 import 'package:radix_entrega_project/Screens/add_car_screen.dart';
 import 'package:radix_entrega_project/Screens/after_accept_run_screen.dart';
 import 'package:radix_entrega_project/Screens/edit_profile.dart';
@@ -34,6 +36,8 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => DeliveryManProvider()),
+        ChangeNotifierProvider(create: (_) => VeiculoProvider()),
+        ChangeNotifierProvider(create: (_) => PedidoProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -54,11 +58,11 @@ class _MyAppState extends State<MyApp> {
           AppRoutes.FEEDBACKS: (ctx) => const FeedbackScreen(),
           AppRoutes.PROFILE: (ctx) => ProfileScreen(),
           AppRoutes.CARS: (ctx) => const CarsScreen(),
-          AppRoutes.ACCEPTRUN: (cxt) => const AcceptRunScreen(),
-          AppRoutes.FINISHEDRUN: (cxt) => const FinishedRun(),
+          AppRoutes.ACCEPTRUN: (cxt) => AcceptRunScreen(),
+          AppRoutes.FINISHEDRUN: (cxt) => FinishedRun(),
           AppRoutes.REPORTSCREEN: (cxt) => ReportScreen(),
           AppRoutes.ADDCAR: (cxt) => const AddCarScreen(),
-          AppRoutes.EDITARPERFIL: (cxt) => const EditProfile(),
+          AppRoutes.EDITARPERFIL: (cxt) => EditProfile(),
           AppRoutes.HISTORICDETAIL: (cxt) => HistoricDetailScreen(),
         },
       ),

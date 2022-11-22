@@ -1,6 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:radix_entrega_project/Data/dummy_data.dart';
+import 'package:radix_entrega_project/Model/carro.dart';
 
 import '../Components/button.dart';
 import '../Components/button_white.dart';
@@ -14,8 +17,17 @@ class AddCarScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final nomeVeiculoController = TextEditingController();
     final marcaVeiculoController = TextEditingController();
-    final placaClienteController = TextEditingController();
-    final anoClienteController = TextEditingController();
+    final placaVeiculoController = TextEditingController();
+    final anoVeiculoController = TextEditingController();
+
+    Future<void> addCar(
+        String nome, String marca, String placa, String ano) async {
+      var response = await Dio().post(
+        'http://localhost:8000/api/addVeiculo',
+        data: {'nome': nome, 'marca': marca, 'placa': placa, 'ano': ano},
+      );
+      print(response.data['message']);
+    }
 
     Widget _sizedBox(BoxConstraints constraints, double width, String text,
         TextEditingController txtControl) {
@@ -116,15 +128,21 @@ class AddCarScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _sizedBox(constraints, constraints.maxWidth * .50, 'Placa',
-                        placaClienteController),
+                        placaVeiculoController),
                     _sizedBox(constraints, constraints.maxWidth * .3, 'Ano',
-                        anoClienteController),
+                        anoVeiculoController),
                   ],
                 ),
 
                 Button(
                   text: 'Cadastrar veículo',
                   onTap: () {
+                    addCar(
+                        nomeVeiculoController.text,
+                        marcaVeiculoController.text,
+                        placaVeiculoController.text,
+                        anoVeiculoController.text);
+
                     showModalBottomSheet(
                       context: context,
                       isScrollControlled: true,
@@ -195,7 +213,12 @@ class AddCarScreen extends StatelessWidget {
                 // SizedBox(height: constraints.maxHeight * .03),
                 ButtonWhite(
                   text: 'Limpar Campos',
-                  onTap: () {},
+                  onTap: () {
+                    nomeVeiculoController.text = '';
+                    marcaVeiculoController.text = '';
+                    placaVeiculoController.text = '';
+                    anoVeiculoController.text = '';
+                  },
                   height: constraints.maxHeight * .09,
                   width: constraints.maxWidth * .7,
                   color: false,

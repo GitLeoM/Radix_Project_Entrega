@@ -1,6 +1,6 @@
 {
-    "name": "radix_entrega_project",
-    "short_name": "radix_entrega_project",
+    "name": "radix_entrega",
+    "short_name": "radix_entrega",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

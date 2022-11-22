@@ -1,13 +1,17 @@
 class Carro {
+  final int idVeiculo;
   final String placa;
-  final String anoModelo;
-  final String nomeVeiculo;
-  final String corridasRealizadas;
+  final String ano;
+  final String nome;
+  final String modelo;
+  final int idEntregador;
 
   Carro({
-    required this.nomeVeiculo,
-    required this.anoModelo,
-    required this.corridasRealizadas,
+    required this.idEntregador,
+    required this.ano,
+    required this.idVeiculo,
+    required this.modelo,
+    required this.nome,
     required this.placa,
   });
 }

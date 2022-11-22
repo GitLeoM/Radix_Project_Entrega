@@ -1,14 +1,15 @@
-import 'dart:math';
-
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:radix_entrega_project/Model/delivery_man.dart';
+import 'package:radix_entrega_project/Screens/tabs_screen_home.dart';
 import 'package:radix_entrega_project/components/button.dart';
 import 'package:radix_entrega_project/Providers/delivery_man_provider.dart';
 import 'package:radix_entrega_project/Utils/app_routes.dart';
-
-import '../Model/delivery_man.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../Providers/carro_provider.dart';
+import '../Utils/sharedPreferencesConstants.dart';
 
 class WellcomeBackScreen extends StatefulWidget {
   @override
@@ -23,26 +24,109 @@ class _WelcomeBackScreenState extends State<WellcomeBackScreen> {
   final nomeFormController = TextEditingController();
   final emailFormController = TextEditingController();
   final cpfFormController = TextEditingController();
+  final idadeFormController = TextEditingController();
+  final rgFormController = TextEditingController();
+  bool showPassword = false;
+  bool _checkValue = false;
 
-  DeliveryMan _x(String n, String c, String e, String s) {
-    DeliveryMan deliMan = DeliveryMan(
-      id: Random().nextDouble().toInt(),
-      nome: n,
-      cpf: c,
-      email: e,
-      senha: s,
-      statusConta: true,
-    );
+  Future<void> getLoginInfo(
+      String email, String senha, constraints, bool manterLogin) async {
+    try {
+      var response = await Dio(BaseOptions(sendTimeout: 2000))
+          .get('http://127.0.0.1:8000/api/loginEntregador/$email/$senha');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    return deliMan;
+      String loginResult = response.data['loginResult'];
+      print(response.data);
+      print(response.data['user']['idEntregador']);
+
+      if (loginResult == '1') {
+        Provider.of<VeiculoProvider>(context, listen: false)
+            .loadCarrosVendedor(response.data['user']['idEntregador']);
+        Provider.of<DeliveryManProvider>(context, listen: false)
+            .getEntregador(response.data['user']['idEntregador']);
+        print(Provider.of<DeliveryManProvider>(context, listen: false)
+            .getEntregadores());
+
+        DeliveryMan user = DeliveryMan(
+            id: response.data['user']['idEntregador'],
+            nome: response.data['user']['nome'],
+            cpf: response.data['user']['cpf'],
+            email: response.data['user']['email'],
+            senha: response.data['user']['senha'],
+            idade: response.data['user']['idade'],
+            rg: response.data['user']['rg'],
+            urlImage: response.data['user']['foto'],
+            statusConta: response.data['user']['statusConta']);
+        prefs.setBool(SharedPreferencesConstants.manterLogin, manterLogin);
+        Navigator.pushReplacementNamed(context, AppRoutes.HOMETAB);
+        Provider.of<DeliveryManProvider>(context, listen: false)
+            .changeUser(user);
+      } else {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text(loginResult,
+                style: TextStyle(fontSize: constraints.maxWidth * .04)),
+          ),
+        );
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void createEntregador(String senha, String validaSenha, String nome,
+      String cpf, String email, int idade, String rg, constraints) async {
+    try {
+      if (senhaFormController.text == senhaFormValidationController.text) {
+        var response = await Dio().post(
+          'http://127.0.0.1:8000/api/addEntregador',
+          data: {
+            'nome': nome,
+            'cpf': cpf,
+            'email': email,
+            'senha': senha,
+            'statusConta': '1',
+            'idade': idade,
+            'rg': rg,
+            'foto': '',
+          },
+        );
+        if (response.data['status'] == '400') {
+          showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+              title: Text(response.data['message'],
+                  style: TextStyle(fontSize: constraints.maxWidth * .04)),
+            ),
+          );
+        } else {
+          print(response.data['message']);
+          Navigator.of(context).pop();
+        }
+      } else {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text('As senhas não são iguais',
+                style: TextStyle(fontSize: constraints.maxWidth * .04)),
+          ),
+        );
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   Widget _textField(double height, double width, BoxConstraints constraints,
-      String text, TextEditingController controller) {
+      String text, TextEditingController controller, bool obscure) {
     return SizedBox(
       height: height,
       width: width,
       child: TextField(
+        obscureText: obscure,
+        obscuringCharacter: '*',
         controller: controller,
         decoration: InputDecoration(
           filled: true,
@@ -63,7 +147,46 @@ class _WelcomeBackScreenState extends State<WellcomeBackScreen> {
     );
   }
 
-  void _openAddAdressModalSheet(BuildContext context) {
+  Widget _textField2(double height, double width, BoxConstraints constraints,
+      String text, TextEditingController controller, bool obscure) {
+    return SizedBox(
+      height: height,
+      width: width,
+      child: TextField(
+        obscureText: showPassword ? !obscure : obscure,
+        obscuringCharacter: '*',
+        controller: controller,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+                color: Colors.white, width: constraints.maxWidth * .03),
+            borderRadius: const BorderRadius.all(
+              Radius.circular(10),
+            ),
+          ),
+          suffixIcon: InkWell(
+            onTap: () {
+              setState(() {
+                showPassword = !showPassword;
+              });
+            },
+            child: Icon(
+              showPassword ? Icons.visibility_off : Icons.visibility,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+          hintText: text,
+          hintStyle: TextStyle(
+            fontSize: constraints.maxHeight * .02,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _openAdClientModalSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -97,59 +220,79 @@ class _WelcomeBackScreenState extends State<WellcomeBackScreen> {
                       ),
                       SizedBox(height: constraints.maxHeight * .08),
                       _textField(
-                          constraints.maxHeight * .1,
+                          constraints.maxHeight * .08,
                           constraints.maxWidth * .90,
                           constraints,
-                          'Seu nome',
-                          nomeFormController),
+                          'Nome',
+                          nomeFormController,
+                          false),
                       SizedBox(height: constraints.maxHeight * .02),
                       _textField(
-                          constraints.maxHeight * .1,
+                          constraints.maxHeight * .08,
                           constraints.maxWidth * .90,
                           constraints,
-                          'Seu email',
-                          emailFormController),
+                          'Email',
+                          emailFormController,
+                          false),
                       SizedBox(height: constraints.maxHeight * .02),
                       _textField(
-                          constraints.maxHeight * .1,
+                          constraints.maxHeight * .08,
                           constraints.maxWidth * .90,
                           constraints,
-                          'Seu cpf',
-                          cpfFormController),
+                          'CPF',
+                          cpfFormController,
+                          false),
+                      SizedBox(height: constraints.maxHeight * .02),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _textField(
+                              constraints.maxHeight * .08,
+                              constraints.maxWidth * .67,
+                              constraints,
+                              'RG',
+                              rgFormController,
+                              false),
+                          SizedBox(width: constraints.maxWidth * .03),
+                          _textField(
+                              constraints.maxHeight * .08,
+                              constraints.maxWidth * .20,
+                              constraints,
+                              'Idade',
+                              senhaFormController,
+                              false),
+                        ],
+                      ),
                       SizedBox(height: constraints.maxHeight * .02),
                       _textField(
-                          constraints.maxHeight * .1,
+                          constraints.maxHeight * .08,
                           constraints.maxWidth * .90,
                           constraints,
                           'Senha',
-                          senhaFormController),
+                          senhaFormController,
+                          false),
                       SizedBox(height: constraints.maxHeight * .02),
                       _textField(
-                          constraints.maxHeight * .1,
+                          constraints.maxHeight * .08,
                           constraints.maxWidth * .90,
                           constraints,
-                          'Confirme sua senha',
-                          senhaFormValidationController),
+                          'confirme sua senha',
+                          senhaFormValidationController,
+                          false),
                       SizedBox(height: constraints.maxHeight * .02),
                       SizedBox(height: constraints.maxHeight * .10),
                       Button(
                         text: 'Registrar-se',
-                        onTap: () {
-                          if (senhaFormController.text ==
-                              senhaFormValidationController.text) {
-                            Provider.of<DeliveryManProvider>(context,
-                                    listen: false)
-                                .addDeliMan(
-                              _x(
-                                  nomeFormController.text,
-                                  cpfFormController.text,
-                                  emailFormController.text,
-                                  senhaFormController.text),
-                            );
-                          }
-
-                          Navigator.of(context).pop();
-                        },
+                        onTap: () => createEntregador(
+                          senhaFormController.text,
+                          senhaFormValidationController.text,
+                          nomeFormController.text,
+                          cpfFormController.text,
+                          emailFormController.text,
+                          int.parse(idadeFormController.text),
+                          rgFormController.text,
+                          constraints,
+                        ),
                         height: constraints.maxHeight * .1,
                         width: constraints.maxWidth * .75,
                         color: true,
@@ -196,28 +339,45 @@ class _WelcomeBackScreenState extends State<WellcomeBackScreen> {
                     constraints.maxWidth * .90,
                     constraints,
                     'Email',
-                    emailController),
+                    emailController,
+                    false),
                 SizedBox(height: constraints.maxHeight * .01),
-                _textField(
+                _textField2(
                     constraints.maxHeight * .08,
                     constraints.maxWidth * .90,
                     constraints,
                     'Senha',
-                    senhaController),
-                SizedBox(height: constraints.maxHeight * .03),
+                    senhaController,
+                    true),
+                SizedBox(height: constraints.maxHeight * .01),
+                SizedBox(
+                  width: constraints.maxWidth * .54,
+                  child: CheckboxListTile(
+                    value: _checkValue,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _checkValue = !_checkValue;
+                      });
+                    },
+                    title: const Text(
+                      'Manter Conectado?',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    activeColor: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+                SizedBox(height: constraints.maxHeight * .01),
                 Button(
                   text: 'Entrar',
                   onTap: () {
-                    final provider = Provider.of<DeliveryManProvider>(context,
-                        listen: false);
-                    List l = provider.loginValidate(
-                        emailController.text, senhaController.text);
-                    if (l[0]) {
-                      DeliveryMan deliMan = l[1];
-                      deliMan.setIsUser = true;
-                      Navigator.of(context)
-                          .pushReplacementNamed(AppRoutes.HOMETAB);
-                    }
+                    getLoginInfo(
+                      emailController.text,
+                      senhaController.text,
+                      constraints,
+                      _checkValue,
+                    );
                   },
                   height: constraints.maxHeight * .07,
                   width: constraints.maxWidth * .7,
@@ -228,14 +388,14 @@ class _WelcomeBackScreenState extends State<WellcomeBackScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Ainda não tem uma conta ?',
+                      'Ainda não tem uma conta?',
                       style: TextStyle(
                           fontSize: constraints.maxHeight * .02,
                           color: Colors.black,
                           fontWeight: FontWeight.w700),
                     ),
                     InkWell(
-                      onTap: () => _openAddAdressModalSheet(context),
+                      onTap: () => _openAdClientModalSheet(context),
                       child: Text(
                         '   Clique aqui',
                         style: TextStyle(

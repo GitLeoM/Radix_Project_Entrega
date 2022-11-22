@@ -3,7 +3,7 @@ import 'package:radix_entrega_project/Screens/historic_detail_screen.dart';
 import 'package:radix_entrega_project/Utils/app_routes.dart';
 
 class HistoricTile extends StatelessWidget {
-  final int index;
+  int index;
   final constraints;
   final String titleNumPed;
   final String subTitleValor, subTitleDistan, subTitleTempGast;
@@ -79,12 +79,7 @@ class HistoricTile extends StatelessWidget {
                 0, constraints.maxWidth * .016, constraints.maxWidth * .04, 0),
             child: IconButton(
               onPressed: () {
-                int i = index;
-                print(i);
-
-                print(HistoricDetailScreen().index);
-                HistoricDetailScreen(index: i);
-                print('depois de settar: ${HistoricDetailScreen().index}');
+                final int i = index;
 
                 Navigator.of(context).pushNamed(AppRoutes.HISTORICDETAIL);
               },

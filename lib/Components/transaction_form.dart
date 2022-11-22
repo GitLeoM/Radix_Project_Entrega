@@ -1,15 +1,22 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:radix_entrega_project/Data/dummy_data.dart';
+import 'package:radix_entrega_project/Screens/after_accept_run_screen.dart';
 import 'package:radix_entrega_project/Utils/app_routes.dart';
 
+import '../Model/pedido.dart';
 import '../Model/pedidos.dart';
+import '../Providers/pedido_provider.dart';
 
 class TransactionForm extends StatelessWidget {
   final bool pedidoSolicitado;
+  int randomNum = 0;
 
   TransactionForm({this.pedidoSolicitado = false});
 
@@ -28,15 +35,13 @@ class TransactionForm extends StatelessWidget {
       children: [
         Container(
           padding: EdgeInsets.only(top: top, left: left),
-          child: Expanded(
-            child: Text(
-              valuePedido,
-              overflow: TextOverflow.fade,
-              style: TextStyle(
-                color: colorTrueFalse ? color : null,
-                fontWeight: fontWTrueFalse ? fontWeight : null,
-                fontSize: fontS,
-              ),
+          child: Text(
+            'R\$$valuePedido',
+            overflow: TextOverflow.fade,
+            style: TextStyle(
+              color: colorTrueFalse ? color : null,
+              fontWeight: fontWTrueFalse ? fontWeight : null,
+              fontSize: fontS,
             ),
           ),
         ),
@@ -54,10 +59,15 @@ class TransactionForm extends StatelessWidget {
     );
   }
 
+  sortearPed() {
+    randomNum = Random().nextInt(5);
+  }
+
   @override
   Widget build(BuildContext context) {
     int i = 0;
-    final pedido = DUMMY_pedidos[i];
+    final pedido = DUMMY_pedidos[randomNum];
+    List<Pedido> _pedidos = Provider.of<PedidoProvider>(context).getPedidos();
     return LayoutBuilder(
       builder: ((context, constraints) {
         return ClipRRect(
@@ -68,6 +78,7 @@ class TransactionForm extends StatelessWidget {
               elevation: 10,
               borderOnForeground: true,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SvgPicture.asset(
                     'assets/svg/undraw_delivery_truck_vt6p.svg',
@@ -90,7 +101,7 @@ class TransactionForm extends StatelessWidget {
                   ),
                   _row(
                       top: 20,
-                      valuePedido: pedido.valor,
+                      valuePedido: _pedidos[randomNum].frete.toString(),
                       fontWTrueFalse: true,
                       fontS: 30),
                   _row(
@@ -140,6 +151,9 @@ class TransactionForm extends StatelessWidget {
                     children: [
                       IconButton(
                         onPressed: () {
+                          AcceptRunScreen(
+                            index: randomNum,
+                          );
                           Navigator.of(context).pushNamed(AppRoutes.ACCEPTRUN);
                         },
                         icon: const Icon(

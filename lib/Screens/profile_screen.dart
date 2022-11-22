@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:radix_entrega_project/Data/dummy_data.dart';
 import 'package:radix_entrega_project/Utils/app_routes.dart';
 import '../Components/profile_button.dart';
+import '../Model/carro.dart';
+import '../Model/delivery_man.dart';
+import '../Providers/carro_provider.dart';
+import '../Providers/delivery_man_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -24,7 +29,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     int i = 1;
-    final pessoa = DUMMY_Delivery[i];
+    List<DeliveryMan> _entregador =
+        Provider.of<DeliveryManProvider>(context).getEntregadores();
+    List<Carro> _veiculos = Provider.of<VeiculoProvider>(context).getVeiculo();
 
     return Scaffold(
       body: LayoutBuilder(
@@ -34,7 +41,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 Container(
                   height: constraints.maxHeight * .3,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Color.fromRGBO(132, 202, 157, 1),
                   ),
                   child: Column(
@@ -50,7 +57,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Navigator.of(context)
                                   .pushNamed(AppRoutes.EDITARPERFIL);
                             },
-                            child: Text(
+                            child: const Text(
                               'Editar',
                               style:
                                   TextStyle(color: Colors.white, fontSize: 18),
@@ -62,7 +69,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: Text(
                               'Perfil',
                               style: TextStyle(
-                                  fontSize: constraints.maxWidth * .1,
+                                  fontSize: constraints.maxWidth * .08,
                                   color: Colors.white),
                             ),
                           ),
@@ -71,7 +78,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Navigator.of(context)
                                   .pushNamed(AppRoutes.WELCOMEBACK);
                             },
-                            child: Text(
+                            child: const Text(
                               'Sair',
                               style:
                                   TextStyle(color: Colors.white, fontSize: 18),
@@ -89,10 +96,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             borderRadius: BorderRadius.circular(100),
                             child: Container(
                               height: constraints.maxHeight * .16,
-                              width: constraints.maxWidth * .3,
+                              width: constraints.maxWidth * .25,
                               color: Colors.white,
-                              child:
-                                  Image.asset('assets/images/homem_aranha.png'),
+                              child: Image.asset('assets/images/semfoto.png'),
                             ),
                           ),
                           Column(
@@ -101,17 +107,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             children: [
                               Row(
                                 children: [
+                                  SizedBox(
+                                    width: constraints.maxWidth * .02,
+                                  ),
                                   Text(
                                     'Nome:',
                                     style: TextStyle(
-                                        fontSize: constraints.maxWidth * .04,
+                                        fontSize: constraints.maxWidth * .037,
                                         color: Colors.black38,
                                         fontWeight: FontWeight.w600),
                                   ),
                                   Text(
-                                    pessoa.nome,
+                                    _entregador[0].nome,
                                     style: TextStyle(
-                                        fontSize: constraints.maxWidth * .04,
+                                        fontSize: constraints.maxWidth * .037,
                                         fontWeight: FontWeight.w600),
                                   ),
                                 ],
@@ -121,20 +130,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                               Padding(
                                 padding: EdgeInsets.only(
-                                    left: constraints.maxWidth * .04),
+                                    left: constraints.maxWidth * .045),
                                 child: Row(
                                   children: [
                                     Text(
                                       'Placa do veículo:',
                                       style: TextStyle(
-                                          fontSize: constraints.maxWidth * .04,
+                                          fontSize: constraints.maxWidth * .037,
                                           color: Colors.black38,
                                           fontWeight: FontWeight.w600),
                                     ),
                                     Text(
-                                      pessoa.carro!.placa,
+                                      _veiculos[0].nome,
                                       style: TextStyle(
-                                          fontSize: constraints.maxWidth * .04,
+                                          fontSize: constraints.maxWidth * .037,
                                           fontWeight: FontWeight.w600),
                                     ),
                                   ],
@@ -145,17 +154,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                               Row(
                                 children: [
+                                  SizedBox(
+                                    width: constraints.maxWidth * .02,
+                                  ),
                                   Text(
                                     'Modelo do veículo:',
                                     style: TextStyle(
-                                        fontSize: constraints.maxWidth * .04,
+                                        fontSize: constraints.maxWidth * .037,
                                         color: Colors.black38,
                                         fontWeight: FontWeight.w600),
                                   ),
                                   Text(
-                                    pessoa.carro!.nomeVeiculo,
+                                    _veiculos[0].modelo,
                                     style: TextStyle(
-                                        fontSize: constraints.maxWidth * .04,
+                                        fontSize: constraints.maxWidth * .037,
                                         fontWeight: FontWeight.w600),
                                   ),
                                 ],

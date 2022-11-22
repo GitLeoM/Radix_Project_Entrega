@@ -1,11 +1,20 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:radix_entrega_project/Components/transaction_form.dart';
+import 'package:radix_entrega_project/Model/delivery_man.dart';
+import 'package:radix_entrega_project/Providers/delivery_man_provider.dart';
+import 'package:radix_entrega_project/Providers/pedido_provider.dart';
 
 import '../Components/button.dart';
 
 import '../Data/dummy_data.dart';
+import '../Providers/carro_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -15,13 +24,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  var list = DUMMY_Delivery;
-  int i = 1;
+  bool _isLoading = true;
 
   _setButton() {
     setState(() {
-      DUMMY_Delivery.elementAt(i).statusOnOff =
-          !DUMMY_Delivery.elementAt(i).statusOnOff;
+      DUMMY_OnOFF.elementAt(0).onOff = !DUMMY_OnOFF.elementAt(0).onOff;
     });
   }
 
@@ -50,9 +57,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  _screenChange(BoxConstraints constraints) {
+  _screenChange(BoxConstraints constraints, String nome) {
     {
-      if (DUMMY_Delivery.elementAt(i).statusOnOff == false) {
+      var sOF = DUMMY_OnOFF.elementAt(0).onOff;
+
+      if (sOF == false) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -60,30 +69,33 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(left: 22, top: 44),
+                  padding: EdgeInsets.only(
+                      left: constraints.maxWidth * .045,
+                      top: constraints.maxHeight * .065),
                   child: Text(
-                    onOff(list.elementAt(i).statusOnOff),
+                    onOff(sOF),
                     style: onlineOff(
                       context,
-                      list.elementAt(i).statusOnOff,
+                      sOF,
                     ),
                   ),
                 ),
               ],
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                top: 30,
+              padding: EdgeInsets.only(
+                top: constraints.maxHeight * .1,
               ),
               child: Text(
-                'Bem-Vindo, ${list.elementAt(i).nome}!',
+                'Bem-Vindo, $nome!',
                 style: const TextStyle(
                   fontSize: 30,
                 ),
               ),
             ),
             Padding(
-                padding: const EdgeInsets.only(top: 30), child: _buttonOn()),
+                padding: EdgeInsets.only(top: constraints.maxHeight * .05),
+                child: _buttonOn()),
             SizedBox(height: constraints.maxHeight * .10),
             Text(
               'Não há entregas ainda!',
@@ -114,15 +126,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Row(
                     children: [
                       Text(
-                        onOff(list.elementAt(i).statusOnOff),
+                        onOff(sOF),
                         style: onlineOff(
                           context,
-                          list.elementAt(i).statusOnOff,
+                          sOF,
                         ),
                       ),
                       Padding(
-                        padding:
-                            EdgeInsets.only(left: constraints.maxWidth * .52),
+                        padding: EdgeInsets.only(
+                            left: constraints.maxWidth *
+                                .54), //padding do botão de parar
                         child: _buttonOff(),
                       ),
                     ],
@@ -131,11 +144,11 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                top: 30,
+              padding: EdgeInsets.only(
+                top: constraints.maxHeight * .1,
               ),
               child: Text(
-                'Bem-Vindo, ${list.elementAt(i).nome}!',
+                'Bem-Vindo, $nome!',
                 style: const TextStyle(
                   fontSize: 30,
                 ),
@@ -176,6 +189,22 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Provider.of<PedidoProvider>(context, listen: false).loadPedidos();
+    Provider.of<VeiculoProvider>(context, listen: false)
+        .loadCarrosVendedor(context.watch<DeliveryManProvider>().getUser.id);
+    Provider.of<DeliveryManProvider>(context, listen: false)
+        .getEntregador(context.watch<DeliveryManProvider>().getUser.id)
+        .then((value) {
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -188,88 +217,22 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            child: Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: _screenChange(constraints)),
-          );
-        },
-      ),
-      drawer: Drawer(
-        child: LayoutBuilder(
-          builder: ((context, constraints) => Container(
-                width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: constraints.minHeight * .05),
-                    Row(
-                      children: [
-                        Switch(
-                          value: false,
-                          onChanged: (t) {},
-                          activeColor: const Color.fromRGBO(132, 202, 157, 1),
-                        ),
-                        const Text('Configuração 1')
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Switch(
-                          value: false,
-                          onChanged: (t) {},
-                          activeColor: const Color.fromRGBO(132, 202, 157, 1),
-                        ),
-                        const Text('Configuração 2')
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Switch(
-                          value: false,
-                          onChanged: (t) {},
-                          activeColor: const Color.fromRGBO(132, 202, 157, 1),
-                        ),
-                        const Text('Configuração 3')
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Switch(
-                          value: false,
-                          onChanged: (t) {},
-                          activeColor: const Color.fromRGBO(132, 202, 157, 1),
-                        ),
-                        const Text('Configuração 4')
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Switch(
-                          value: false,
-                          onChanged: (t) {},
-                          activeColor: const Color.fromRGBO(132, 202, 157, 1),
-                        ),
-                        const Text('Configuração 5')
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Switch(
-                          value: false,
-                          onChanged: (t) {},
-                          activeColor: const Color.fromRGBO(132, 202, 157, 1),
-                        ),
-                        const Text('Configuração 6')
-                      ],
-                    ),
-                  ],
-                ),
-              )),
-        ),
-      ),
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: _screenChange(
+                        constraints,
+                        context.watch<DeliveryManProvider>().getUser.nome,
+                      )),
+                );
+              },
+            ),
     );
   }
 }

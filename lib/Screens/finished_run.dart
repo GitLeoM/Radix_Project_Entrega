@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:provider/provider.dart';
 import 'package:radix_entrega_project/Components/button_white.dart';
 import 'package:radix_entrega_project/Data/dummy_data.dart';
 import 'package:radix_entrega_project/Utils/app_routes.dart';
 
+import '../Model/pedido.dart';
+import '../Providers/pedido_provider.dart';
+
 class FinishedRun extends StatelessWidget {
-  const FinishedRun({Key? key}) : super(key: key);
+  int index;
+  FinishedRun({this.index = 0});
 
   Widget _columnInfos(BoxConstraints constraints, String titleBig, int index,
       String infoRequisitada) {
@@ -54,7 +59,7 @@ class FinishedRun extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int i = 0;
+    List<Pedido> _pedidos = Provider.of<PedidoProvider>(context).getPedidos();
     return Scaffold(
       body: LayoutBuilder(
         builder: ((context, constraints) {
@@ -92,13 +97,16 @@ class FinishedRun extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 _columnInfos(constraints, 'Valor da entrega:',
-                                    i, DUMMY_pedidos.elementAt(i).valor),
-                                _columnInfos(constraints, 'Tempo total gasto:',
-                                    i, DUMMY_pedidos.elementAt(i).tempEntrega),
+                                    index, _pedidos[index].frete.toString()),
+                                _columnInfos(
+                                    constraints,
+                                    'Tempo total gasto:',
+                                    index,
+                                    DUMMY_pedidos.elementAt(index).tempEntrega),
                                 _columnInfos(constraints, 'Número do pedido:',
-                                    i, DUMMY_pedidos.elementAt(i).numPed),
-                                _columnInfos(constraints, 'Nome do cliente:', i,
-                                    DUMMY_cliente.elementAt(i).nome),
+                                    index, _pedidos[index].idPedido.toString()),
+                                _columnInfos(constraints, 'Nome do cliente:',
+                                    index, DUMMY_cliente.elementAt(index).nome),
                                 Container(
                                   width: double.infinity,
                                   child: Column(
@@ -111,7 +119,8 @@ class FinishedRun extends StatelessWidget {
                                         height: constraints.maxHeight * .02,
                                       ),
                                       Text(
-                                        DUMMY_pedidos.elementAt(i).localInic,
+                                        DUMMY_pedidos.elementAt(index)
+                                            .localInic,
                                         style: const TextStyle(
                                             fontWeight: FontWeight.w300,
                                             fontSize: 18),
@@ -122,7 +131,7 @@ class FinishedRun extends StatelessWidget {
                                         size: 40,
                                       ),
                                       Text(
-                                        DUMMY_pedidos.elementAt(i).localFim,
+                                        DUMMY_pedidos.elementAt(index).localFim,
                                         style: const TextStyle(
                                             fontWeight: FontWeight.w300,
                                             fontSize: 18),

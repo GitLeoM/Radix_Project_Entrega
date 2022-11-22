@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:radix_entrega_project/Screens/home_screen.dart';
 import 'package:radix_entrega_project/Screens/profile_screen.dart';
 
+import '../Model/delivery_man.dart';
+import '../Providers/carro_provider.dart';
+import '../Providers/delivery_man_provider.dart';
 import 'historic_screen.dart';
 
 class TabsScreenHome extends StatefulWidget {
@@ -11,6 +15,7 @@ class TabsScreenHome extends StatefulWidget {
 
 class _TabsScreenHomeState extends State<TabsScreenHome> {
   int _selectScreenIndex = 1;
+  bool _isLoading = true;
 
   final List<Widget> _listScreen = [
     HistoricScreen(),

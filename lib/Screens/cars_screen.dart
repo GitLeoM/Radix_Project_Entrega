@@ -1,8 +1,13 @@
+import 'dart:math';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:radix_entrega_project/Components/button.dart';
+import 'package:provider/provider.dart';
+
 import 'package:radix_entrega_project/Components/button_white.dart';
+import 'package:radix_entrega_project/Model/carro.dart';
+import 'package:radix_entrega_project/Providers/carro_provider.dart';
+import 'package:radix_entrega_project/Providers/delivery_man_provider.dart';
 import 'package:radix_entrega_project/Utils/app_routes.dart';
 
 import '../Components/cars_tile.dart';
@@ -16,49 +21,46 @@ class CarsScreen extends StatefulWidget {
 }
 
 class _CarsScreenState extends State<CarsScreen> {
-  var i = 0;
-  final carro1 = DUMMY_Delivery[0].carro;
-  final carro2 = DUMMY_Delivery[1].carro;
-  final carro3 = DUMMY_Delivery[2].carro;
-  final carro4 = DUMMY_Delivery[3].carro;
+  Map<int, List<Carro>> _veiculosMap = {};
+
+  void _delete(int index) {
+    setState(() {
+      Provider.of<VeiculoProvider>(context).deleteCarro(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    List<Carro> _veiculos = Provider.of<VeiculoProvider>(context).getVeiculo();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
       ),
-      body: Container(
-        child: LayoutBuilder(builder: (context, constraints) {
-          return Column(
+      body: LayoutBuilder(builder: (context, constraints) {
+        return SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    SizedBox(height: constraints.maxHeight * .03),
-                    CarsTile(
-                      subTitlePlaca: carro1!.placa,
-                      subTitleQntdCorridas: carro1!.corridasRealizadas,
-                      titleCar: carro1!.nomeVeiculo,
+              SizedBox(height: constraints.maxHeight * .04),
+              Container(
+                height: constraints.maxHeight * .9,
+                child: ListView.builder(
+                  itemCount: _veiculos.length,
+                  itemBuilder: (context, index) {
+                    Carro c = _veiculos[index];
+                    int randomRuns = Random().nextInt(101);
+                    // minuto = Random().nextInt(59) + 1;
+                    return CarsTile(
                       constraints: constraints,
-                      trailingIcon: Icons.clear_rounded,
-                    ),
-                    CarsTile(
-                      subTitlePlaca: carro2!.placa,
-                      subTitleQntdCorridas: carro2!.corridasRealizadas,
-                      titleCar: carro2!.nomeVeiculo,
-                      constraints: constraints,
-                      trailingIcon: Icons.clear_rounded,
-                    ),
-                    CarsTile(
-                      subTitlePlaca: carro3!.placa,
-                      subTitleQntdCorridas: carro3!.corridasRealizadas,
-                      titleCar: carro3!.nomeVeiculo,
-                      constraints: constraints,
-                      trailingIcon: Icons.clear_rounded,
-                    ),
-                    SizedBox(height: constraints.maxHeight * .1),
-                  ],
+                      func: () {
+                        _delete(index);
+                      },
+                      subTitlePlaca: _veiculos[index].placa,
+                      subTitleQntdCorridas: randomRuns.toString(),
+                      titleCar: _veiculos[index].nome,
+                    );
+                  },
                 ),
               ),
               ButtonWhite(
@@ -71,9 +73,9 @@ class _CarsScreenState extends State<CarsScreen> {
                 color: true,
               )
             ],
-          );
-        }),
-      ),
+          ),
+        );
+      }),
     );
   }
 }
