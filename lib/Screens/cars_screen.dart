@@ -25,7 +25,9 @@ class _CarsScreenState extends State<CarsScreen> {
 
   void _delete(int index) {
     setState(() {
-      Provider.of<VeiculoProvider>(context).deleteCarro(index);
+      Provider.of<VeiculoProvider>(context, listen: false).deleteVeiculo(index);
+      List<Carro> _veiculos =
+          Provider.of<VeiculoProvider>(context, listen: false).getVeiculo();
     });
   }
 
@@ -50,7 +52,7 @@ class _CarsScreenState extends State<CarsScreen> {
                   itemBuilder: (context, index) {
                     Carro c = _veiculos[index];
                     int randomRuns = Random().nextInt(101);
-                    // minuto = Random().nextInt(59) + 1;
+
                     return CarsTile(
                       constraints: constraints,
                       func: () {

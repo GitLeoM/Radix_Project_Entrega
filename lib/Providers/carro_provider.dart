@@ -58,8 +58,15 @@ class VeiculoProvider with ChangeNotifier {
     return _x;
   }
 
-  void deleteCarro(int id) {
-    _veiculos.removeWhere((v) => v.idVeiculo == id);
-    notifyListeners();
+  deleteVeiculo(int veiculo) async {
+    var response = await Dio()
+        .delete('http://127.0.0.1:8000/api/deleteVeiculo/${veiculo + 4}');
+
+    if (response.data['status'] == '200') {
+      print(response.data['mensagem'].toString());
+    } else {
+      print(response.data['mensagem'].toString());
+      print(veiculo);
+    }
   }
 }

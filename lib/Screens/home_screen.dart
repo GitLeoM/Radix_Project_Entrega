@@ -189,23 +189,37 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    Provider.of<PedidoProvider>(context, listen: false).loadPedidos();
-    Provider.of<VeiculoProvider>(context, listen: false)
-        .loadCarrosVendedor(context.watch<DeliveryManProvider>().getUser.id);
-    Provider.of<DeliveryManProvider>(context, listen: false)
-        .getEntregador(context.watch<DeliveryManProvider>().getUser.id)
-        .then((value) {
-      setState(() {
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   Provider.of<PedidoProvider>(context, listen: false).loadPedidos();
+  //   Provider.of<VeiculoProvider>(context, listen: false)
+  //       .loadCarrosVendedor(context.watch<DeliveryManProvider>().getUser.id);
+  //   Provider.of<DeliveryManProvider>(context, listen: false)
+  //       .getEntregador(context.watch<DeliveryManProvider>().getUser.id)
+  //       .then((value) {
+  //     setState(() {
+  //       _isLoading = false;
+  //     });
+  //   });
+  // }
+
+  _changeLoading() {
+    setState(() {
+      if (Provider.of<DeliveryManProvider>(context, listen: false)
+              .getEntregador !=
+          null) {
         _isLoading = false;
-      });
+      } else {
+        _isLoading = true;
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    _changeLoading();
+
     return Scaffold(
       appBar: AppBar(
         actions: [

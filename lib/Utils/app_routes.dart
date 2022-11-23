@@ -1,7 +1,7 @@
 class AppRoutes {
-  static const OPENINGSCREEN = '/opening' /* '/'*/;
+  static const OPENINGSCREEN = '/' /* '/opening'*/;
   static const WELCOMEBACK = '/welcomeback';
-  static const HOMETAB = '/' /*'/hometab' */;
+  static const HOMETAB = '/hometab' /*'/' */;
   static const TESTE = '/teste';
   static const PROFILE = '/profile';
   static const HISTORIC = '/profile-historic';
