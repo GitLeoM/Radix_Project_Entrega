@@ -83,7 +83,9 @@ foreign key (idCliente) references tblCliente(idCliente),
 idItem int,
 foreign key (idItem) references tblItem(idItem),
 idVendedor int,
-foreign key (idVendedor) references tblVendedor(idVendedor)
+foreign key (idVendedor) references tblVendedor(idVendedor),
+idEntregador int,
+foreign key (idEntregador) references tblEntregador(idEntregador)
 );
 
 #Tabela Pedido temporario (carrinho)
@@ -129,7 +131,9 @@ motivo varchar(300),
 idVendedor int,
 foreign key (idVendedor) references tblVendedor(idVendedor),
 idCliente int,
-foreign key (idCliente) references tblCliente(idCliente)
+foreign key (idCliente) references tblCliente(idCliente),
+idEntregador int,
+foreign key (idEntregador) references tblEntregador(idEntregador)
 );
 
 #Tabela Feedback
